@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block css %}
+{% endblock %}
+{% block body %}
+
+{% include 'navbar.html' %}
+
+<div class="container">
+  <div class="fixed-action-btn">
+    <a class="waves-effect waves-light btn-floating btn-large modal-trigger" href="#upload"><i class="material-icons">send</i></a>
+  </div>
+
+  <div class="section"></div>
+  {% for book_line in g.books|batch(4)|reverse %}
+  <div class="row">
+    {% for book in book_line|reverse %}
+    <div class="col s12 m6 l3">
+      <div class="card">
+        <div class="card-image waves-effect waves-block waves-light">
+          <a href="/books/{{ book.id }}/read">
+            <img class="responsive-img" src="/books/{{ book.id }}/thumbnail">
+          </a>
+        </div>
+        <div class="card-content">
+          <span class="card-title grey-text text-darken-4">
+            {{ book.title }}
+          </span>
+          <p>{{ book.author }}</p>
+        </div>
+        <div class="card-action sticky-action">
+          <a href="/books/{{ book.filename }}">Download</a>
+          <a href="/books/{{ book.id }}/read">Read</a>
+          <a href="/books/{{ book.id }}/delete">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <!-- Modal Structure -->
+  <div id="upload" class="modal">
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <div class="modal-content">
+        <h4>Send new iBooks</h4>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>File</span>
+            <input name="file" type="file">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+          <i class="material-icons right">send</i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block java %}
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.modal').modal();
+});
+$(".dropdown-button").dropdown();
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+Materialize.toast('"{{ message }}"', 4000)
+{% endfor %}
+{% endif %}
+{% endwith %}
+</script>
+{% endblock %}

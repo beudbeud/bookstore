@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom'
+	xmlns:dc='http://purl.org/dc/terms/'
+	xmlns:opds='http://opds-spec.org/2010/catalog'
+	xmlns:fbreader='http://data.fbreader.org/catalog/metadata/'
+	xmlns:calibre='http://calibre.kovidgoyal.net/2009/metadata'
+	>
+	<id>fbreader:books:catalog:v1</id>
+	<title>FBReaderÂ® book network</title>
+	<subtitle>My personal catalogue</subtitle>
+	<icon>/static/images/logo-120x120.png</icon>
+	<fbreader:search-icon>/static/images/folders-light/search.png</fbreader:search-icon>
+	<link type='application/atom+xml' rel='self' href='https://books.fbreader.org/opds/by_upload_date' />
+	<link type='application/opensearchdescription+xml' rel='search' title='Search FBReader book network' href='https://books.fbreader.org/opensearch.xml'/>
+<!--subtitle>beudbeud@gmail.com</subtitle-->
+<author><email>beudbeud@gmail.com</email></author>
+
+<fbreader:view>series</fbreader:view>
+<entry>
+	<id>fbreader:book:f151873c401b63564bc0895f0858ea7cd2d47084:bookksM0K1TFH9OTyKaBo8kk1</id>
+	<title>Lonely Planet National Parks of America</title>
+	<updated>2018-01-24T08:48:06+00:00</updated>
+	<dc:language>en</dc:language>
+	<link href='/files/book.thumbnail/bookksM0K1TFH9OTyKaBo8kk1' type='image/jpeg' rel='http://opds-spec.org/thumbnail'/>
+	<link href='/files/book.cover/bookksM0K1TFH9OTyKaBo8kk1/cover.jpg' type='image/jpeg' rel='http://opds-spec.org/cover'/>
+	<link href='/files/book.file/bookksM0K1TFH9OTyKaBo8kk1/Lonely%20Planet%20National%20Parks%20of%20America.epub' type='application/epub+zip' rel='http://opds-spec.org/acquisition/open-access'>
+	</link>
+	<dc:identifier>sha1:eb116e3bdd3647314c16a456d3bdcedd68d9bb4c</dc:identifier>
+	<author>
+		<name>Lonely Planet</name>
+		<uri>fbreader:author:012749</uri>
+	</author>
+</entry>
+</feed>
