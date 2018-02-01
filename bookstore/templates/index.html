@@ -18,7 +18,7 @@
       <div class="card">
         <div class="card-image waves-effect waves-block waves-light">
           <a href="/books/{{ book.id }}/read">
-            <img class="responsive-img" src="/books/{{ book.id }}/thumbnail">
+            <img class="responsive-img" src="/books/media/{{book.filename}}.png">
           </a>
         </div>
         <div class="card-content">
@@ -67,7 +67,7 @@
 $(document).ready(function(){
   $('.modal').modal();
 });
-$(".dropdown-button").dropdown();
+$(".button-collapse").sideNav();
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 {% for message in messages %}

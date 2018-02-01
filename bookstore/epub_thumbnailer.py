@@ -96,14 +96,14 @@ def find_cover(epub_file):
     # Which file are we working with?
     input_file = epub_file
     # Where do does the file have to be saved?
-    output_file = epub_file + ".png"
+    output_file = epub_file.split('.')[0] + ".png"
     # Required size?
     size = app.config['COVER_SIZE']
     
     # An epub is just a zip
     file_url = urllib.urlopen(input_file)
     epub = zipfile.ZipFile(StringIO(file_url.read()), "r")
-    
+
     extraction_strategies = [get_cover_from_manifest, get_cover_by_filename]
     
     for strategy in extraction_strategies:

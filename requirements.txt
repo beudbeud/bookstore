@@ -1,6 +1,5 @@
 pypandoc
 jinja2
-path.py
 flask
 flask-login
 flask-uploads

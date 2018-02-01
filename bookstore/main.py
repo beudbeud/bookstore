@@ -1,24 +1,19 @@
 #!/usr/bin/env python
 
 import os
-from flask import Flask, url_for, request, redirect, flash, render_template, g, jsonify, send_from_directory
+from flask import Flask, url_for, request, redirect, flash, render_template, g, send_from_directory
 import flask_login
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
-from .tools import allowed_file
+from tools import allowed_file
 from werkzeug.utils import secure_filename
 from epubzilla.epubzilla import Epub
-from .epub_thumbnailer import find_cover
+from epub_thumbnailer import find_cover
 from settings import app, db, login_manager
 from models import User, Book
+import zipfile
 
 @app.route('/register' , methods=['POST'])
 def register():
     if request.method == 'POST':
-        if request.form['admin'] == 'Off':
-            admin_right = False
-        else:
-            admin_right = True
         user = User(request.form['username'] , request.form['password'], request.form['email'], False)
         try:
             db.session.add(user)
@@ -26,7 +21,7 @@ def register():
             flash('User successfully registered')
         except:
             flash('Error')
-        return redirect('/users')
+        return redirect(url_for('users'))
 
 @app.route('/')
 @flask_login.login_required
@@ -49,6 +44,21 @@ def users():
         flash('Access Unauthorized')
         return redirect('/')
 
+@app.route('/users/<id>/delete')
+@flask_login.login_required
+def delete_user(id):
+    obj = User.query.get(id)
+    db.session.delete(obj)
+    db.session.commit()
+    return redirect('/users')
+
+@app.route('/users/<id>/edit')
+@flask_login.login_required
+def edit_user(id):
+    g.obj = User.query.get(id)
+    db.session.commit()
+    return redirect('/users')
+
 @app.route('/upload', methods=['POST'])
 @flask_login.login_required
 def upload_file():
@@ -58,41 +68,37 @@ def upload_file():
     file = request.files['file']
     if file and allowed_file(file.filename):
         epub = Epub.from_file(file)
-        epub_file = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        book = Book(file.filename, epub.title, epub.author)
+        epub_file_ext = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(epub_file_ext)
+        find_cover(epub_file_ext)
+        epub_file = os.path.splitext(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))[0]
+        book = Book(secure_filename(file.filename.split('.')[0]), epub.title, epub.author)
+        with zipfile.ZipFile(file,"r") as zip_ref:
+            zip_ref.extractall(epub_file)
         db.session.add(book)
         db.session.commit()
-        file.save(epub_file)
-        find_cover(epub_file)
         flash('Upload sucessful')
     else:
         flash('Epub only is allowed')
     return redirect('/')
 
-@app.route('/books/<path:filename>')
+@app.route('/books/media/<path:path>')
 @flask_login.login_required
-def show(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                                           filename)
-@app.route('/books/<id>/thumbnail')
-@flask_login.login_required
-def thumbnail(id):
-    obj = Book.query.filter_by(id=id).one()
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                                                       obj.filename + ".png")
+def show(path):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], path)
 
 @app.route('/books/<id>/delete')
 @flask_login.login_required
 def delete(id):
-    obj = Book.query.filter_by(id=id).one()
+    obj = Book.query.get(id)
     db.session.delete(obj)
     db.session.commit()
     return redirect('/')
-    
+
 @app.route('/books/<id>/read')
 @flask_login.login_required
 def read(id):
-    g.read_book = Book.query.filter_by(id=id).one()
+    g.read_book = Book.query.get(id)
     return render_template('read.html')
 
 @app.route('/login', methods=['GET', 'POST'])
